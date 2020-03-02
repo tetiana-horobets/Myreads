@@ -1,9 +1,17 @@
 import React from 'react'
 // import * as BooksAPI from './BooksAPI'
 import './App.css'
-import {getAll} from './BooksAPI.js'
+import {getAll, update} from './BooksAPI.js'
 
 class Book extends React.Component {
+
+  updateShelf(shelf) {
+    const {id} = this.props;
+    update({id}, shelf)
+      .then(() => console.log('update book'))
+      .catch(() => console.error('could not update book'));
+  }
+
   render() {
     const { cover = 0 } = this.props;
     return (
@@ -12,7 +20,7 @@ class Book extends React.Component {
             <div className="book-top">
                 <div className="book-cover" style={{ width: 128, height: 193, backgroundImage:cover}}></div>
                 <div className="book-shelf-changer">
-                  <select>
+                  <select onChange={e => this.updateShelf(e.target.value)} value={this.props.shelf}>
                     <option value="move" disabled>Move to...</option>
                     <option value="currentlyReading">Currently Reading</option>
                     <option value="wantToRead">Want to Read</option>
@@ -26,6 +34,29 @@ class Book extends React.Component {
           <div className="book-title">{this.props.title}</div>
           <div className="book-authors">{this.props.authors}</div>
         </div>
+    );
+  }
+}
+
+class Shelf extends React.Component{
+  render() {
+    console.log(this.props.shelfBooks)
+    return (
+      <div className="bookshelf">
+        <h2 className="bookshelf-title">{this.props.shelfName}</h2>
+        <div className="bookshelf-books">
+          <ol className="books-grid">
+          {this.props.shelfBooks.map(book =>
+              <Book
+                id={book.id}
+                shelf={book.shelf}
+                title={book.title}
+                authors={book.authors.join(', ')}
+                cover={`url("${book.imageLinks.smallThumbnail}")`}
+            />)}
+          </ol>
+        </div>
+      </div>
     );
   }
 }
@@ -58,12 +89,14 @@ class BooksApp extends React.Component {
   }
 
   render() {
+    const books = this.state.books
+
     return (
       <div className="app">
         {this.state.showSearchPage ? (
           <div className="search-books">
             <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
+              <a className="close-search" onClick={() => this.setState({ showSearchPage: false,  })}>Close</a>
               <div className="search-books-input-wrapper">
                 {/*
                   NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -89,31 +122,18 @@ class BooksApp extends React.Component {
               <h1>MyReads</h1>
             </div>
             <div className="list-books-content">
-              <div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Currently Reading</h2>
-                  <div className="bookshelf-books">
-                    <ol className="books-grid">
-          {this.state.books.map(book =>
-                      <Book title={book.title} authors={book.authors.join(', ')} cover={`url("${book.imageLinks.smallThumbnail}")`}/>)}
-                    </ol>
-                  </div>
-                </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Want to Read</h2>
-                  <div className="bookshelf-books">
-                      <ol className="books-grid">
-                    </ol>
-                  </div>
-                </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Read</h2>
-                  <div className="bookshelf-books">
-                    <ol className="books-grid">
-                    </ol>
-                  </div>
-                </div>
-              </div>
+                <Shelf
+                  shelfBooks={books.filter(book => book.shelf === 'currentlyReading')}
+                  shelfName={'Currently Reading'}
+                />
+                <Shelf
+                  shelfBooks={books.filter(book => book.shelf === 'wantToRead')}
+                  shelfName={'Want to Read'}
+                />
+                <Shelf
+                  shelfBooks={books.filter(book => book.shelf === 'read')}
+                  shelfName={'Read'}
+                />
             </div>
             <div className="open-search">
               <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
