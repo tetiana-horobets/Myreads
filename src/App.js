@@ -40,7 +40,6 @@ class Book extends React.Component {
 
 class Shelf extends React.Component{
   render() {
-    console.log(this.props.shelfBooks)
     return (
       <div className="bookshelf">
         <h2 className="bookshelf-title">{this.props.shelfName}</h2>
@@ -87,9 +86,15 @@ class BooksApp extends React.Component {
       showSearchPage: showSearchPage.trim()
     }))
   }
-
   render() {
     const books = this.state.books
+    const { showSearchPage } = this.state
+
+    const showingBooks = showSearchPage === ''
+        ? books
+        : books.filter((c) => (
+            c.title.toString().toLowerCase().includes(showSearchPage.toString().toLowerCase())
+          ))
 
     return (
       <div className="app">
@@ -113,7 +118,17 @@ class BooksApp extends React.Component {
               </div>
             </div>
             <div className="search-books-results">
-              <ol className="books-grid"></ol>
+              <ol className="books-grid">
+              {showingBooks.map(book =>
+                  <Book
+                    id={book.id}
+                    shelf={book.shelf}
+                    title={book.title}
+                    authors={book.authors.join(', ')}
+                    cover={`url("${book.imageLinks.smallThumbnail}")`}
+                />)}
+
+              </ol>
             </div>
           </div>
         ) : (
@@ -136,7 +151,7 @@ class BooksApp extends React.Component {
                 />
             </div>
             <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+              <a onClick={() => this.setState({ showSearchPage: '' })}>Add a book</a>
             </div>
           </div>
         )}
