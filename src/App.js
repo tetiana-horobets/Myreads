@@ -90,7 +90,7 @@ class BooksApp extends React.Component {
     const books = this.state.books
     const { showSearchPage } = this.state
 
-    const showingBooks = showSearchPage === ''
+    const showingBooks = showSearchPage === true
         ? books
         : books.filter((c) => (
             c.title.toString().toLowerCase().includes(showSearchPage.toString().toLowerCase())
@@ -151,7 +151,7 @@ class BooksApp extends React.Component {
                 />
             </div>
             <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: '' })}>Add a book</a>
+              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
             </div>
           </div>
         )}
