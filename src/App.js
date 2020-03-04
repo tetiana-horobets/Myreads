@@ -113,7 +113,6 @@ class BooksApp extends React.Component {
                 */}
                 <input type="text"
                  placeholder="Search by title or author"
-                 value={this.state.showSearchPage}
                  onChange={(event) => this.updateShowSearchPage(event.target.value)}/>
               </div>
             </div>
