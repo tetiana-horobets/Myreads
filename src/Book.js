@@ -6,7 +6,7 @@ class Book extends React.Component {
   updateShelf(shelf) {
     const {id} = this.props;
     update({id}, shelf)
-      .then(() => console.log('update book'))
+      .then(() => this.props.onBookUpdate())
       .catch(() => console.error('could not update book'));
   }
 

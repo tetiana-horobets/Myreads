@@ -1,7 +1,6 @@
 import React from 'react';
 import Book from './Book';
 
-
 class Shelf extends React.Component{
   render() {
     return (
@@ -11,11 +10,13 @@ class Shelf extends React.Component{
           <ol className="books-grid">
           {this.props.shelfBooks.map(book =>
               <Book
+                key={book.id}
                 id={book.id}
                 shelf={book.shelf}
                 title={book.title}
                 authors={book.authors.join(', ')}
                 cover={`url("${book.imageLinks.smallThumbnail}")`}
+                onBookUpdate={this.props.onBookUpdate}
             />)}
           </ol>
         </div>
@@ -23,4 +24,5 @@ class Shelf extends React.Component{
     );
   }
 }
+
 export default Shelf
