@@ -2,6 +2,9 @@ import React from 'react'
 import './App.css'
 import {getAll, update} from './BooksAPI.js'
 import { BrowserRouter, Route, Link } from "react-router-dom";
+import Search from './Search';
+import Book from './Book';
+
 
 class BooksApp extends React.Component {
 
@@ -24,7 +27,7 @@ class BooksApp extends React.Component {
     }
 
     render() {
-      const books = this.state.books
+      const books = this.state.books;
       const { showSearchPage } = this.state
 
       const showingBooks = showSearchPage === true
@@ -36,23 +39,7 @@ class BooksApp extends React.Component {
       return (
         <BrowserRouter>
         <div className="app">
-          <Route exact path="/" render={() => (
-            <div className="app">
-              {this.state.showSearchPage ? (
-                <div className="search-books">
-                  <div className="search-books-bar">
-                    <a className="close-search" onClick={() => this.setState({ showSearchPage: false,  })}>Close</a>
-                    <div className="search-books-input-wrapper">
-                      <input type="text"
-                       placeholder="Search by title or author"
-                       onChange={(event) => this.updateShowSearchPage(event.target.value)}/>
-                    </div>
-                  </div>
-                  <SearchBooksResults
-                  showSearchBooks = {showingBooks}
-                  />
-                </div>
-              ) : (
+          <Route exact path="/search" component={() => <Search showSearchBooks={showingBooks}/>} />
                 <div className="list-books">
                   <div className="list-books-title">
                     <h1>MyReads</h1>
@@ -72,72 +59,13 @@ class BooksApp extends React.Component {
                       />
                   </div>
                   <div className="open-search">
-                    <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
                     <Link to="/search"
-                    className='search-books'
                      onClick={() => this.setState({ showSearchPage: true })}>Search</Link>
                   </div>
                 </div>
-              )}
-            </div>
-          )}/>
         </div>
       </BrowserRouter>
-      )
-  }
-}
-
-class Book extends React.Component {
-
-  updateShelf(shelf) {
-    const {id} = this.props;
-    update({id}, shelf)
-      .then(() => console.log('update book'))
-      .catch(() => console.error('could not update book'));
-  }
-
-  render() {
-    const { cover = 0 } = this.props;
-    return (
-        <div>
-          <div className="book">
-            <div className="book-top">
-                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage:cover}}></div>
-                <div className="book-shelf-changer">
-                  <select onChange={e => this.updateShelf(e.target.value)} value={this.props.shelf}>
-                    <option value="move" disabled>Move to...</option>
-                    <option value="currentlyReading">Currently Reading</option>
-                    <option value="wantToRead">Want to Read</option>
-                    <option value="read">Read</option>
-                    <option value="none">None</option>
-                  </select>
-                </div>
-            </div>
-          </div>
-          <div className="book-title">{this.props.title}</div>
-          <div className="book-authors">{this.props.authors}</div>
-        </div>
-    );
-  }
-}
-
-class SearchBooksResults extends React.Component {
-
-  render() {
-    return (
-        <div className="search-books-results">
-          <ol className="books-grid">
-          {this.props.showSearchBooks.map(book =>
-              <Book
-                id={book.id}
-                shelf={book.shelf}
-                title={book.title}
-                authors={book.authors.join(', ')}
-                cover={`url("${book.imageLinks.smallThumbnail}")`}
-            />)}
-          </ol>
-        </div>
-    );
+    )
   }
 }
 
