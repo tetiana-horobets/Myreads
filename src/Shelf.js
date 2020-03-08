@@ -1,4 +1,6 @@
 import React from 'react';
+import Book from './Book';
+
 
 class Shelf extends React.Component{
   render() {

@@ -4,7 +4,7 @@ import {getAll, update} from './BooksAPI.js'
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import Search from './Search';
 import Book from './Book';
-
+import Shelf from './Shelf';
 
 class BooksApp extends React.Component {
 
@@ -28,18 +28,14 @@ class BooksApp extends React.Component {
 
     render() {
       const books = this.state.books;
-      const { showSearchPage } = this.state
-
-      const showingBooks = showSearchPage === true
-          ? books
-          : books.filter((c) => (
-              c.title.toString().toLowerCase().includes(showSearchPage.toString().toLowerCase())
-            ))
 
       return (
         <BrowserRouter>
         <div className="app">
-          <Route exact path="/search" component={() => <Search showSearchBooks={showingBooks}/>} />
+        {this.state.showSearchPage ? (
+
+          <Route exact path="/search" component={() => <Search showSearchBooks={books}/>} />
+        ) : (
                 <div className="list-books">
                   <div className="list-books-title">
                     <h1>MyReads</h1>
@@ -63,41 +59,11 @@ class BooksApp extends React.Component {
                      onClick={() => this.setState({ showSearchPage: true })}>Search</Link>
                   </div>
                 </div>
+              )}
         </div>
       </BrowserRouter>
     )
   }
 }
 
-class Shelf extends React.Component{
-  render() {
-    return (
-      <div className="bookshelf">
-        <h2 className="bookshelf-title">{this.props.shelfName}</h2>
-        <div className="bookshelf-books">
-          <ol className="books-grid">
-          {this.props.shelfBooks.map(book =>
-              <Book
-                id={book.id}
-                shelf={book.shelf}
-                title={book.title}
-                authors={book.authors.join(', ')}
-                cover={`url("${book.imageLinks.smallThumbnail}")`}
-            />)}
-          </ol>
-        </div>
-      </div>
-    );
-  }
-}
-
 export default BooksApp
-
-{/*
-  <Route exact path="/" render={() => (
-    <Link
-    to='/search'
-    className='search'
-    >Search</Link>
-
-*/}
