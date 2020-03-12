@@ -1,10 +1,28 @@
 import React from 'react';
+import {getAll} from './BooksAPI.js'
 import Shelf from './Shelf';
 import { Link } from "react-router-dom";
 
 class ShowBook extends React.Component {
 
+  state = {
+    books: []
+  }
+
+  constructor(props) {
+     super(props);
+
+     this.loadBooks();
+  }
+
+  loadBooks() {
+    getAll()
+       .then(books => this.setState({books: books}));
+  }
+
   render() {
+    const books = this.state.books;
+
     return (
       <div className="list-books">
         <div className="list-books-title">
@@ -12,19 +30,19 @@ class ShowBook extends React.Component {
         </div>
         <div className="list-books-content">
             <Shelf
-              shelfBooks={this.props.books.filter(book => book.shelf === 'currentlyReading')}
+              shelfBooks={books.filter(book => book.shelf === 'currentlyReading')}
               shelfName={'Currently Reading'}
-              onBookUpdate={this.props.onBookUpdate}
+              onBookUpdate={() => this.loadBooks()}
             />
             <Shelf
-              shelfBooks={this.props.books.filter(book => book.shelf === 'wantToRead')}
+              shelfBooks={books.filter(book => book.shelf === 'wantToRead')}
               shelfName={'Want to Read'}
-              onBookUpdate={this.props.onBookUpdate}
+              onBookUpdate={() => this.loadBooks()}
             />
             <Shelf
-              shelfBooks={this.props.books.filter(book => book.shelf === 'read')}
+              shelfBooks={books.filter(book => book.shelf === 'read')}
               shelfName={'Read'}
-              onBookUpdate={this.props.onBookUpdate}
+              onBookUpdate={() => this.loadBooks()}
             />
         </div>
         <div className="open-search">

@@ -1,36 +1,29 @@
 import React from 'react';
 import Book from './Book';
+import {search} from './BooksAPI.js'
+
 
 class Search extends React.Component {
 
   state = {
-    searchTerm: ''
+    books: []
   }
 
   updateSearchTerm(searchTerm) {
-    this.setState(() => ({
-      searchTerm: searchTerm.trim()
-    }))
-  }
-
-  bookMatches(book, searchTerm) {
-    return book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    book.authors.filter(author => author.toLowerCase().includes(searchTerm.toLowerCase())).length > 0
-  }
-
-  getSearchResults() {
-    const {books} = this.props;
-    const {searchTerm} = this.state;
-
-    if (searchTerm.length > 0) {
-      return books.filter(book => this.bookMatches(book, searchTerm));
+    console.log('updating seach term', searchTerm);
+    if (searchTerm) {
+      console.log('searching...');
+      search(searchTerm)
+         .then(books => this.setState({books: books}));
     }
+  }
 
-    return [];
+  constructor(props) {
+     super(props);
   }
 
   render() {
-    const searchResults = this.getSearchResults();
+    const books = this.state.books;
 
     return (
       <div className="search-books">
@@ -43,14 +36,14 @@ class Search extends React.Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-          {searchResults.map(book =>
+          {books.map(book =>
               <Book
                 key={book.id}
                 id={book.id}
                 shelf={book.shelf}
                 title={book.title}
-                authors={book.authors.join(', ')}
-                cover={`url("${book.imageLinks.smallThumbnail}")`}
+                authors={book.authors && book.authors.join(', ')}
+                cover={book.imageLinks && `url("${book.imageLinks.smallThumbnail}")`}
                 onBookUpdate={() => {}}
             />)}
           </ol>
