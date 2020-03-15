@@ -14,7 +14,13 @@ class Search extends React.Component {
     if (searchTerm) {
       console.log('searching...');
       search(searchTerm)
-         .then(books => this.setState({books: books}));
+         .then(books => {
+           if (!books.error) {
+             this.setState({books: books});
+           } else {
+             this.setState({books: []});
+           }
+         });
     }
   }
 
