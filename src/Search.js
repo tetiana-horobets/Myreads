@@ -2,7 +2,6 @@ import React from 'react';
 import Book from './Book';
 import {search} from './BooksAPI.js'
 
-
 class Search extends React.Component {
 
   state = {
@@ -10,9 +9,7 @@ class Search extends React.Component {
   }
 
   updateSearchTerm(searchTerm) {
-    console.log('updating seach term', searchTerm);
     if (searchTerm) {
-      console.log('searching...');
       search(searchTerm)
          .then(books => {
            if (!books.error) {
