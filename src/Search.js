@@ -1,11 +1,12 @@
 import React from 'react';
 import Book from './Book';
-import {search} from './BooksAPI.js'
+import {search,getAll} from './BooksAPI.js'
 
 class Search extends React.Component {
 
   state = {
-    books: []
+    books: [],
+    shelfs: {}
   }
 
   updateSearchTerm(searchTerm) {
@@ -23,6 +24,18 @@ class Search extends React.Component {
 
   constructor(props) {
      super(props);
+     this.loadBooks();
+  }
+
+  loadBooks() {
+    getAll()
+       .then(books => {
+         const map = {};
+         books.forEach((book) => {
+           map[book.id] = book.shelf;
+         });
+         this.setState({shelfs: map});
+       });
   }
 
   render() {
@@ -43,11 +56,11 @@ class Search extends React.Component {
               <Book
                 key={book.id}
                 id={book.id}
-                shelf={book.shelf}
+                shelf={this.state.shelfs[book.id]}
                 title={book.title}
                 authors={book.authors && book.authors.join(', ')}
                 cover={book.imageLinks && `url("${book.imageLinks.smallThumbnail}")`}
-                onBookUpdate={() => {}}
+                onBookUpdate={() => this.loadBooks()}
             />)}
           </ol>
         </div>
